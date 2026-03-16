@@ -230,8 +230,76 @@
         .card-icon.impressions { background: rgba(59,130,246,0.15); color: var(--accent-blue); }
         .card-icon.clicks { background: rgba(6,182,212,0.15); color: var(--accent-cyan); }
         .card-icon.spend { background: rgba(245,158,11,0.15); color: var(--accent-orange); }
+        .card-icon.tv { background: rgba(139,92,246,0.15); color: var(--accent-purple); }
+        .card-icon.radio { background: rgba(236,72,153,0.15); color: var(--accent-pink); }
+        .card-icon.digital { background: rgba(6,182,212,0.15); color: var(--accent-cyan); }
+        .card-icon.social { background: rgba(59,130,246,0.15); color: var(--accent-blue); }
+        .card-icon.search { background: rgba(245,158,11,0.15); color: var(--accent-orange); }
         .card-icon.revenue { background: rgba(16,185,129,0.15); color: var(--accent-green); }
         .card-icon.conversions { background: rgba(139,92,246,0.15); color: var(--accent-purple); }
+
+        /* Channel group label */
+        .channel-group-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 4px;
+            margin-top: 12px;
+            padding-left: 4px;
+        }
+        .channel-group-label:first-child { margin-top: 0; }
+        .data-card.channel-card {
+            padding: 14px 20px;
+        }
+        .data-card.channel-card .card-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .data-card.channel-card .card-title {
+            font-size: 13px;
+        }
+        .data-card.channel-card .card-desc {
+            font-size: 11px;
+        }
+        .data-card.metric-card {
+            border-left: 3px solid rgba(59,130,246,0.3);
+            margin-left: 16px;
+            padding: 12px 18px;
+        }
+        .data-card.metric-card .card-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .data-card.metric-card .card-title {
+            font-size: 12px;
+        }
+        .data-card.metric-card .card-desc {
+            font-size: 10px;
+        }
+
+        /* External factors */
+        .external-factors {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px dashed rgba(255,255,255,0.1);
+        }
+        .external-factors .channel-group-label {
+            color: var(--accent-orange);
+        }
+        .data-card.external-card {
+            border-left: 3px solid rgba(245,158,11,0.3);
+            background: rgba(245,158,11,0.03);
+        }
+        .card-icon.weather { background: rgba(6,182,212,0.15); color: var(--accent-cyan); }
+        .card-icon.seasonal { background: rgba(239,68,68,0.15); color: var(--accent-red); }
+        .card-icon.economic { background: rgba(245,158,11,0.15); color: var(--accent-orange); }
+        .card-icon.promotions { background: rgba(16,185,129,0.15); color: var(--accent-green); }
         .card-title { font-weight: 600; font-size: 15px; }
         .card-desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
 
@@ -692,31 +760,102 @@
         <div class="section-label">The Core Question</div>
         <div class="section-title">How does marketing activity<br>drive business results?</div>
         <div class="section-subtitle">
-            On one side you have <strong>activity data</strong> — every impression served, click recorded, and pound spent across your channels. On the other side you have <strong>business KPIs</strong> — the revenue earned and conversions generated. Meridian's job is to figure out the causal link between them.
+            On one side you have <strong>activity data</strong> from each media channel — TV, Radio, Social, Search, Display — measured by impressions, clicks, and spend. On the other side you have <strong>business KPIs</strong> — revenue and conversions. But revenue doesn't just depend on marketing. <strong>External factors</strong> like weather, seasonal festivities, the economy, and promotions also drive sales. Meridian's job is to untangle all of these forces and figure out the true causal link between your marketing and your outcomes.
         </div>
 
         <div class="big-picture">
-            <!-- LEFT: Activity Data -->
+            <!-- LEFT: Activity Data by Channel + External Factors -->
             <div class="data-side">
-                <div class="data-card" style="animation: fadeInLeft 0.6s ease 0.1s both">
+                <div class="channel-group-label">Media Channels</div>
+
+                <div class="data-card channel-card" style="animation: fadeInLeft 0.6s ease 0.05s both">
+                    <div class="card-icon tv">📺</div>
+                    <div>
+                        <div class="card-title">TV</div>
+                        <div class="card-desc">Broadcast &amp; streaming ads</div>
+                    </div>
+                </div>
+                <div class="data-card channel-card" style="animation: fadeInLeft 0.6s ease 0.12s both">
+                    <div class="card-icon radio">📻</div>
+                    <div>
+                        <div class="card-title">Radio</div>
+                        <div class="card-desc">Audio spots &amp; podcasts</div>
+                    </div>
+                </div>
+                <div class="data-card channel-card" style="animation: fadeInLeft 0.6s ease 0.19s both">
+                    <div class="card-icon social">👥</div>
+                    <div>
+                        <div class="card-title">Social Media</div>
+                        <div class="card-desc">Facebook, Instagram, TikTok, etc.</div>
+                    </div>
+                </div>
+                <div class="data-card channel-card" style="animation: fadeInLeft 0.6s ease 0.26s both">
+                    <div class="card-icon search">🔍</div>
+                    <div>
+                        <div class="card-title">Paid Search</div>
+                        <div class="card-desc">Google Ads, Bing, etc.</div>
+                    </div>
+                </div>
+                <div class="data-card channel-card" style="animation: fadeInLeft 0.6s ease 0.33s both">
+                    <div class="card-icon digital">🖥</div>
+                    <div>
+                        <div class="card-title">Display &amp; Video</div>
+                        <div class="card-desc">Programmatic &amp; YouTube</div>
+                    </div>
+                </div>
+
+                <div class="channel-group-label" style="margin-top: 14px;">Per-Channel Metrics</div>
+                <div class="data-card metric-card" style="animation: fadeInLeft 0.6s ease 0.4s both">
                     <div class="card-icon impressions">👁</div>
                     <div>
                         <div class="card-title">Impressions</div>
-                        <div class="card-desc">How many times your ads were seen</div>
+                        <div class="card-desc">How many times ads were seen</div>
                     </div>
                 </div>
-                <div class="data-card" style="animation: fadeInLeft 0.6s ease 0.3s both">
+                <div class="data-card metric-card" style="animation: fadeInLeft 0.6s ease 0.47s both">
                     <div class="card-icon clicks">👆</div>
                     <div>
                         <div class="card-title">Clicks</div>
-                        <div class="card-desc">Engagements with your ads</div>
+                        <div class="card-desc">Engagements with ads</div>
                     </div>
                 </div>
-                <div class="data-card" style="animation: fadeInLeft 0.6s ease 0.5s both">
+                <div class="data-card metric-card" style="animation: fadeInLeft 0.6s ease 0.54s both">
                     <div class="card-icon spend">💰</div>
                     <div>
                         <div class="card-title">Spend</div>
                         <div class="card-desc">Budget allocated per channel</div>
+                    </div>
+                </div>
+
+                <div class="external-factors" style="animation: fadeInLeft 0.6s ease 0.6s both">
+                    <div class="channel-group-label">External Factors (Controls)</div>
+                    <div class="data-card external-card" style="animation: fadeInLeft 0.6s ease 0.65s both">
+                        <div class="card-icon weather">🌦</div>
+                        <div>
+                            <div class="card-title">Weather</div>
+                            <div class="card-desc">Temperature, rain — affects footfall &amp; buying behaviour</div>
+                        </div>
+                    </div>
+                    <div class="data-card external-card" style="animation: fadeInLeft 0.6s ease 0.72s both; margin-top: 8px;">
+                        <div class="card-icon seasonal">🎄</div>
+                        <div>
+                            <div class="card-title">Seasonal Festivities</div>
+                            <div class="card-desc">Christmas, Black Friday, Easter — natural demand spikes</div>
+                        </div>
+                    </div>
+                    <div class="data-card external-card" style="animation: fadeInLeft 0.6s ease 0.79s both; margin-top: 8px;">
+                        <div class="card-icon economic">📊</div>
+                        <div>
+                            <div class="card-title">Economic Indicators</div>
+                            <div class="card-desc">CPI, consumer confidence, interest rates</div>
+                        </div>
+                    </div>
+                    <div class="data-card external-card" style="animation: fadeInLeft 0.6s ease 0.86s both; margin-top: 8px;">
+                        <div class="card-icon promotions">🏷</div>
+                        <div>
+                            <div class="card-title">Promotions &amp; Pricing</div>
+                            <div class="card-desc">Sales events, discount codes, price changes</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -772,7 +911,7 @@
             <div class="step-card">
                 <div class="step-number">01</div>
                 <h3>Collect Historical Data</h3>
-                <p>Meridian ingests weekly (or daily) time-series data: how much was spent on each channel, what impressions or clicks resulted, and what the KPI outcome was. It also takes in <strong>control variables</strong> like seasonality, promotions, and economic factors that might affect revenue independently of marketing.</p>
+                <p>Meridian ingests weekly (or daily) time-series data for every media channel — TV, Radio, Social, Search, Display — including spend, impressions, and clicks. Crucially, it also takes in <strong>external control variables</strong>: weather patterns, seasonal festivities (Christmas, Black Friday), economic indicators, and promotions. These controls let the model separate "revenue went up because of our TV campaign" from "revenue went up because it was Christmas."</p>
             </div>
             <div class="step-card">
                 <div class="step-number">02</div>
@@ -782,7 +921,7 @@
             <div class="step-card">
                 <div class="step-number">03</div>
                 <h3>Fit a Bayesian Regression</h3>
-                <p>With transformed inputs, Meridian builds a regression model: <em>KPI = f(channel₁, channel₂, … , controls)</em>. Being <strong>Bayesian</strong>, it doesn't just find one "best" answer — it explores a range of plausible answers, giving you uncertainty estimates and confidence intervals for every coefficient.</p>
+                <p>Meridian builds a regression: <em>KPI = f(TV, Radio, Social, Search, … , weather, seasonality, promotions)</em>. By including external factors alongside media channels, the model can isolate the <strong>incremental</strong> effect of each channel — the uplift your marketing creates <em>above and beyond</em> what would have happened anyway. Being Bayesian, it gives you uncertainty estimates and confidence intervals, not just point estimates.</p>
             </div>
             <div class="step-card">
                 <div class="step-number">04</div>
@@ -808,7 +947,7 @@
                 <div class="pipeline-stage" data-stage="0">
                     <div class="stage-icon">📊</div>
                     <h4>Raw Data</h4>
-                    <p>Impressions, clicks, spend per channel per week, plus control variables</p>
+                    <p>Impressions, clicks, spend for TV, Radio, Social, Search, Display — plus external controls (weather, seasonality, economy)</p>
                     <div class="pipeline-arrow">→</div>
                 </div>
                 <div class="pipeline-stage" data-stage="1">
@@ -954,7 +1093,9 @@
         </div>
 
         <div class="summary-flow">
-            <div class="summary-node">Impressions / Clicks / Spend</div>
+            <div class="summary-node">TV / Radio / Social / Search / Display</div>
+            <div class="summary-arrow">→</div>
+            <div class="summary-node">Impressions, Clicks, Spend</div>
             <div class="summary-arrow">→</div>
             <div class="summary-node">Adstock &amp; Saturation</div>
             <div class="summary-arrow">→</div>
@@ -964,9 +1105,14 @@
             <div class="summary-arrow">→</div>
             <div class="summary-node" style="border-color: var(--accent-green); color: var(--accent-green);">Optimised Budget → Max Revenue</div>
         </div>
+        <div class="summary-flow" style="margin-top: 16px;">
+            <div class="summary-node" style="border-color: var(--accent-orange); color: var(--accent-orange);">Weather / Seasonality / Economy / Promotions</div>
+            <div class="summary-arrow">↗</div>
+            <div style="font-size: 12px; color: var(--text-dim); max-width: 260px; text-align: left; line-height: 1.5;">External factors feed into the regression as controls, so the model can isolate marketing's true incremental effect</div>
+        </div>
 
-        <p style="margin-top: 48px; color: var(--text-dim); font-size: 14px; line-height: 1.7; max-width: 600px; margin-left: auto; margin-right: auto;">
-            The key insight: Meridian doesn't just find correlations. By modelling carryover effects, diminishing returns, and using Bayesian priors, it builds a <strong>causal understanding</strong> of how your marketing activity translates into business results — and uses that understanding to make your budget work harder.
+        <p style="margin-top: 48px; color: var(--text-dim); font-size: 14px; line-height: 1.7; max-width: 650px; margin-left: auto; margin-right: auto;">
+            The key insight: Meridian doesn't just find correlations. By modelling carryover effects, diminishing returns, accounting for external factors like weather and seasonal demand, and using Bayesian priors, it builds a <strong>causal understanding</strong> of how your marketing activity translates into business results — separating genuine marketing impact from background noise — and uses that understanding to make your budget work harder.
         </p>
     </div>
 </section>
