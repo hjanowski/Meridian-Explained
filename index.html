@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Meridian Works — A Visual Explainer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --bg: #0a0e1a;
+            --bg-card: #111827;
+            --bg-card-hover: #1a2236;
+            --border: #1e293b;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-pink: #ec4899;
+            --accent-red: #ef4444;
+            --glow-blue: rgba(59, 130, 246, 0.3);
+            --glow-green: rgba(16, 185, 129, 0.3);
+            --glow-purple: rgba(139, 92, 246, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* ── Scroll progress bar ── */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-green));
+            z-index: 1000;
+            transition: width 0.1s linear;
+        }
+
+        /* ── Navigation dots ── */
+        .nav-dots {
+            position: fixed;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-dot.active {
+            background: var(--accent-blue);
+            box-shadow: 0 0 12px var(--glow-blue);
+        }
+        .nav-dot::after {
+            content: attr(data-label);
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            font-size: 11px;
+            color: var(--text-dim);
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+        .nav-dot:hover::after { opacity: 1; }
+
+        /* ── Section base ── */
+        .section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 40px;
+            position: relative;
+        }
+        .section-inner {
+            max-width: 1200px;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .section-inner.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── Hero ── */
+        .hero {
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: heroPulse 6s ease-in-out infinite;
+        }
+        @keyframes heroPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+        }
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-blue) 50%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+        }
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.35rem);
+            color: var(--text-dim);
+            max-width: 700px;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+        .hero .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            animation: bounce 2s infinite;
+            color: var(--text-dim);
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(8px); }
+        }
+
+        /* ── Section titles ── */
+        .section-label {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent-blue);
+            margin-bottom: 12px;
+        }
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+        .section-subtitle {
+            font-size: clamp(1rem, 1.8vw, 1.15rem);
+            color: var(--text-dim);
+            max-width: 680px;
+            line-height: 1.7;
+            margin-bottom: 48px;
+        }
+
+        /* ── The big picture diagram ── */
+        .big-picture {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 0;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .data-side, .kpi-side {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .data-card, .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.4s ease;
+            cursor: default;
+        }
+        .data-card:hover, .kpi-card:hover {
+            background: var(--bg-card-hover);
+            transform: translateX(4px);
+        }
+        .kpi-card:hover { transform: translateX(-4px); }
+        .card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .card-icon.impressions { background: rgba(59,130,246,0.15); color: var(--accent-blue); }
+        .card-icon.clicks { background: rgba(6,182,212,0.15); color: var(--accent-cyan); }
+        .card-icon.spend { background: rgba(245,158,11,0.15); color: var(--accent-orange); }
+        .card-icon.revenue { background: rgba(16,185,129,0.15); color: var(--accent-green); }
+        .card-icon.conversions { background: rgba(139,92,246,0.15); color: var(--accent-purple); }
+        .card-title { font-weight: 600; font-size: 15px; }
+        .card-desc { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+        /* Center connector */
+        .center-connector {
+            width: 260px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 0 20px;
+        }
+        .meridian-core {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #1e3a5f, #0f1b2d);
+            border: 2px solid var(--accent-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 0 40px var(--glow-blue), inset 0 0 30px rgba(59,130,246,0.1);
+        }
+        .meridian-core::before {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 1px solid rgba(59,130,246,0.2);
+            animation: coreRing 3s ease-in-out infinite;
+        }
+        @keyframes coreRing {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.08); opacity: 1; }
+        }
+        .meridian-core span {
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: 1px;
+        }
+        .meridian-core small {
+            font-size: 10px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        /* Animated flow lines */
+        .flow-lines {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+        .flow-line {
+            position: absolute;
+            height: 2px;
+            top: 50%;
+            opacity: 0.4;
+        }
+        .flow-line.left {
+            left: 0;
+            width: 45%;
+            background: linear-gradient(90deg, var(--accent-blue), transparent);
+            animation: flowLeft 2s ease-in-out infinite;
+        }
+        .flow-line.right {
+            right: 0;
+            width: 45%;
+            background: linear-gradient(270deg, var(--accent-green), transparent);
+            animation: flowRight 2s ease-in-out infinite;
+        }
+        @keyframes flowLeft {
+            0% { opacity: 0; transform: translateX(-20px); }
+            50% { opacity: 0.6; }
+            100% { opacity: 0; transform: translateX(20px); }
+        }
+        @keyframes flowRight {
+            0% { opacity: 0; transform: translateX(20px); }
+            50% { opacity: 0.6; }
+            100% { opacity: 0; transform: translateX(-20px); }
+        }
+
+        /* Animated particles on the connector */
+        .particle-track {
+            position: absolute;
+            top: 50%;
+            height: 2px;
+            width: 100%;
+        }
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            top: -2px;
+        }
+        .particle.to-right {
+            background: var(--accent-blue);
+            box-shadow: 0 0 8px var(--accent-blue);
+            animation: particleRight 2.5s linear infinite;
+        }
+        .particle.to-left {
+            background: var(--accent-green);
+            box-shadow: 0 0 8px var(--accent-green);
+            animation: particleLeft 2.5s linear infinite;
+        }
+        @keyframes particleRight {
+            0% { left: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { left: 100%; opacity: 0; }
+        }
+        @keyframes particleLeft {
+            0% { right: 0%; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { right: 100%; opacity: 0; }
+        }
+
+        /* ── Step-by-step explanation ── */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 20px;
+        }
+        .step-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+        .step-card:hover {
+            border-color: rgba(59,130,246,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+        }
+        .step-card:nth-child(1)::before { background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); }
+        .step-card:nth-child(2)::before { background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink)); }
+        .step-card:nth-child(3)::before { background: linear-gradient(90deg, var(--accent-orange), var(--accent-red)); }
+        .step-card:nth-child(4)::before { background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan)); }
+        .step-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 48px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.04);
+            position: absolute;
+            top: 16px;
+            right: 24px;
+        }
+        .step-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .step-card p {
+            font-size: 14px;
+            color: var(--text-dim);
+            line-height: 1.7;
+        }
+
+        /* ── Animated pipeline section ── */
+        .pipeline-container {
+            margin-top: 20px;
+        }
+        .pipeline {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            position: relative;
+        }
+        .pipeline-stage {
+            flex: 1;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 28px 20px;
+            text-align: center;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+        .pipeline-stage:first-child { border-radius: 16px 0 0 16px; }
+        .pipeline-stage:last-child { border-radius: 0 16px 16px 0; }
+        .pipeline-stage.active {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-blue);
+            z-index: 2;
+        }
+        .pipeline-stage .stage-icon {
+            font-size: 28px;
+            margin-bottom: 12px;
+        }
+        .pipeline-stage h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .pipeline-stage p {
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+        .pipeline-arrow {
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 3;
+            width: 24px;
+            height: 24px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--accent-blue);
+        }
+        .pipeline-stage:last-child .pipeline-arrow { display: none; }
+
+        /* animated highlight sweep */
+        .pipeline-sweep {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 25%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59,130,246,0.06), transparent);
+            animation: sweep 4s ease-in-out infinite;
+            pointer-events: none;
+            border-radius: 16px;
+        }
+        @keyframes sweep {
+            0% { left: -25%; }
+            100% { left: 100%; }
+        }
+
+        /* ── Adstock & Saturation visual ── */
+        .concepts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-top: 20px;
+        }
+        .concept-visual {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+        .concept-visual h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .concept-visual .concept-desc {
+            font-size: 13px;
+            color: var(--text-dim);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        .chart-area {
+            width: 100%;
+            height: 180px;
+            position: relative;
+        }
+        .chart-area canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ── Bayesian section ── */
+        .bayesian-visual {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .bayesian-left {
+            flex: 1;
+        }
+        .bayesian-right {
+            flex: 1;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            min-height: 340px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .bayesian-right canvas {
+            width: 100%;
+            max-height: 280px;
+        }
+        .prior-to-posterior {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .bayes-step {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .bayes-step:hover {
+            border-color: var(--accent-purple);
+        }
+        .bayes-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        .bayes-icon.prior { background: rgba(139,92,246,0.15); color: var(--accent-purple); }
+        .bayes-icon.likelihood { background: rgba(59,130,246,0.15); color: var(--accent-blue); }
+        .bayes-icon.posterior { background: rgba(16,185,129,0.15); color: var(--accent-green); }
+        .bayes-step h4 { font-size: 14px; font-weight: 600; }
+        .bayes-step p { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+        /* ── Output section ── */
+        .output-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 20px;
+        }
+        .output-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+        .output-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+        }
+        .output-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+        .output-card h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        .output-card p {
+            font-size: 13px;
+            color: var(--text-dim);
+            line-height: 1.6;
+        }
+
+        /* ── Summary / Closing ── */
+        .summary-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+        .summary-node {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+        .summary-node:hover { border-color: var(--accent-blue); }
+        .summary-arrow {
+            color: var(--accent-blue);
+            font-size: 20px;
+            animation: arrowPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes arrowPulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 900px) {
+            .big-picture { grid-template-columns: 1fr; gap: 24px; }
+            .center-connector { width: 100%; height: 100px; flex-direction: row; }
+            .steps-grid { grid-template-columns: 1fr; }
+            .concepts-row { grid-template-columns: 1fr; }
+            .bayesian-visual { flex-direction: column; }
+            .output-grid { grid-template-columns: 1fr; }
+            .pipeline { flex-direction: column; }
+            .pipeline-stage:first-child { border-radius: 16px 16px 0 0; }
+            .pipeline-stage:last-child { border-radius: 0 0 16px 16px; }
+            .pipeline-arrow {
+                right: 50%;
+                transform: translateX(50%);
+                bottom: -12px;
+                top: auto;
+            }
+            .nav-dots { display: none; }
+            .section { padding: 60px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<nav class="nav-dots" id="navDots">
+    <div class="nav-dot active" data-section="0" data-label="Intro"></div>
+    <div class="nav-dot" data-section="1" data-label="The Question"></div>
+    <div class="nav-dot" data-section="2" data-label="How It Works"></div>
+    <div class="nav-dot" data-section="3" data-label="The Pipeline"></div>
+    <div class="nav-dot" data-section="4" data-label="Key Concepts"></div>
+    <div class="nav-dot" data-section="5" data-label="Bayesian Engine"></div>
+    <div class="nav-dot" data-section="6" data-label="Outputs"></div>
+    <div class="nav-dot" data-section="7" data-label="Summary"></div>
+</nav>
+
+<!-- ═══════════════ SECTION 0 — HERO ═══════════════ -->
+<section class="hero section" id="sec0">
+    <h1>How Meridian Works</h1>
+    <p>Meridian is Google's open-source <strong>Marketing Mix Model</strong>. It uses Bayesian statistics to understand the true relationship between your marketing activity and business outcomes — so you can optimise every pound of your budget.</p>
+    <div class="scroll-hint">SCROLL TO EXPLORE ↓</div>
+</section>
+
+<!-- ═══════════════ SECTION 1 — THE QUESTION ═══════════════ -->
+<section class="section" id="sec1">
+    <div class="section-inner">
+        <div class="section-label">The Core Question</div>
+        <div class="section-title">How does marketing activity<br>drive business results?</div>
+        <div class="section-subtitle">
+            On one side you have <strong>activity data</strong> — every impression served, click recorded, and pound spent across your channels. On the other side you have <strong>business KPIs</strong> — the revenue earned and conversions generated. Meridian's job is to figure out the causal link between them.
+        </div>
+
+        <div class="big-picture">
+            <!-- LEFT: Activity Data -->
+            <div class="data-side">
+                <div class="data-card" style="animation: fadeInLeft 0.6s ease 0.1s both">
+                    <div class="card-icon impressions">👁</div>
+                    <div>
+                        <div class="card-title">Impressions</div>
+                        <div class="card-desc">How many times your ads were seen</div>
+                    </div>
+                </div>
+                <div class="data-card" style="animation: fadeInLeft 0.6s ease 0.3s both">
+                    <div class="card-icon clicks">👆</div>
+                    <div>
+                        <div class="card-title">Clicks</div>
+                        <div class="card-desc">Engagements with your ads</div>
+                    </div>
+                </div>
+                <div class="data-card" style="animation: fadeInLeft 0.6s ease 0.5s both">
+                    <div class="card-icon spend">💰</div>
+                    <div>
+                        <div class="card-title">Spend</div>
+                        <div class="card-desc">Budget allocated per channel</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CENTER: Meridian -->
+            <div class="center-connector">
+                <div class="particle-track">
+                    <div class="particle to-right" style="animation-delay: 0s"></div>
+                    <div class="particle to-right" style="animation-delay: 0.8s"></div>
+                    <div class="particle to-right" style="animation-delay: 1.6s"></div>
+                </div>
+                <div class="meridian-core">
+                    <span>Meridian</span>
+                    <small>MMM Engine</small>
+                </div>
+                <div class="particle-track" style="top: 60%;">
+                    <div class="particle to-left" style="animation-delay: 0.4s"></div>
+                    <div class="particle to-left" style="animation-delay: 1.2s"></div>
+                </div>
+            </div>
+
+            <!-- RIGHT: KPIs -->
+            <div class="kpi-side">
+                <div class="kpi-card" style="animation: fadeInRight 0.6s ease 0.2s both">
+                    <div class="card-icon revenue">📈</div>
+                    <div>
+                        <div class="card-title">Revenue</div>
+                        <div class="card-desc">Total sales generated</div>
+                    </div>
+                </div>
+                <div class="kpi-card" style="animation: fadeInRight 0.6s ease 0.4s both">
+                    <div class="card-icon conversions">🎯</div>
+                    <div>
+                        <div class="card-title">Conversions</div>
+                        <div class="card-desc">Completed business actions</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════ SECTION 2 — FOUR STEPS ═══════════════ -->
+<section class="section" id="sec2">
+    <div class="section-inner">
+        <div class="section-label">Under the Hood</div>
+        <div class="section-title">Four steps to understanding</div>
+        <div class="section-subtitle">
+            Meridian doesn't just correlate spend with revenue. It models the <em>mechanics</em> of how marketing works — including delayed effects and diminishing returns — to separate genuine impact from coincidence.
+        </div>
+
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">01</div>
+                <h3>Collect Historical Data</h3>
+                <p>Meridian ingests weekly (or daily) time-series data: how much was spent on each channel, what impressions or clicks resulted, and what the KPI outcome was. It also takes in <strong>control variables</strong> like seasonality, promotions, and economic factors that might affect revenue independently of marketing.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">02</div>
+                <h3>Transform with Adstock &amp; Saturation</h3>
+                <p>Raw spend doesn't map directly to impact. Meridian applies <strong>adstock</strong> (a TV ad seen today still influences purchases next week) and <strong>saturation curves</strong> (the 10th million spent on a channel yields less than the 1st). These transforms reflect how marketing actually behaves in the real world.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">03</div>
+                <h3>Fit a Bayesian Regression</h3>
+                <p>With transformed inputs, Meridian builds a regression model: <em>KPI = f(channel₁, channel₂, … , controls)</em>. Being <strong>Bayesian</strong>, it doesn't just find one "best" answer — it explores a range of plausible answers, giving you uncertainty estimates and confidence intervals for every coefficient.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">04</div>
+                <h3>Attribute &amp; Optimise</h3>
+                <p>The fitted model tells you how much each channel contributed to your KPI. You can then run <strong>budget optimisation</strong>: given a fixed budget, Meridian recommends the allocation across channels that maximises expected revenue or conversions.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════ SECTION 3 — PIPELINE ═══════════════ -->
+<section class="section" id="sec3">
+    <div class="section-inner">
+        <div class="section-label">Data Flow</div>
+        <div class="section-title">The Meridian Pipeline</div>
+        <div class="section-subtitle">
+            Data flows through a series of transformations. Each stage refines raw marketing signals into actionable insight.
+        </div>
+
+        <div class="pipeline-container">
+            <div class="pipeline" id="pipeline">
+                <div class="pipeline-sweep"></div>
+                <div class="pipeline-stage" data-stage="0">
+                    <div class="stage-icon">📊</div>
+                    <h4>Raw Data</h4>
+                    <p>Impressions, clicks, spend per channel per week, plus control variables</p>
+                    <div class="pipeline-arrow">→</div>
+                </div>
+                <div class="pipeline-stage" data-stage="1">
+                    <div class="stage-icon">⏳</div>
+                    <h4>Adstock</h4>
+                    <p>Apply carryover — today's ads still have impact tomorrow and next week</p>
+                    <div class="pipeline-arrow">→</div>
+                </div>
+                <div class="pipeline-stage" data-stage="2">
+                    <div class="stage-icon">📉</div>
+                    <h4>Saturation</h4>
+                    <p>Apply diminishing returns — each extra pound delivers less incremental impact</p>
+                    <div class="pipeline-arrow">→</div>
+                </div>
+                <div class="pipeline-stage" data-stage="3">
+                    <div class="stage-icon">🔮</div>
+                    <h4>Bayesian Fit</h4>
+                    <p>Regression finds the coefficient for each channel with uncertainty estimates</p>
+                    <div class="pipeline-arrow">→</div>
+                </div>
+                <div class="pipeline-stage" data-stage="4">
+                    <div class="stage-icon">🎯</div>
+                    <h4>Attribution</h4>
+                    <p>Each channel's contribution to Revenue or Conversions, with confidence intervals</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════ SECTION 4 — ADSTOCK & SATURATION ═══════════════ -->
+<section class="section" id="sec4">
+    <div class="section-inner">
+        <div class="section-label">Key Concepts</div>
+        <div class="section-title">Adstock &amp; Saturation</div>
+        <div class="section-subtitle">
+            These two transformations are what make Meridian's understanding realistic. Without them, the model would assume that spend instantly and linearly translates to outcomes — which isn't how marketing works.
+        </div>
+
+        <div class="concepts-row">
+            <div class="concept-visual">
+                <h3>Adstock (Carryover Effect)</h3>
+                <div class="concept-desc">
+                    When you run a TV campaign this week, its effect doesn't vanish overnight. People remember the ad, and purchases may happen days or weeks later. Meridian models this <strong>decay</strong> — a fraction of this week's spend "carries over" into the next, and the next, gradually fading. This means a spike in spend creates a smoothed-out, lingering impact on your KPI.
+                </div>
+                <div class="chart-area">
+                    <canvas id="adstockChart"></canvas>
+                </div>
+            </div>
+            <div class="concept-visual">
+                <h3>Saturation (Diminishing Returns)</h3>
+                <div class="concept-desc">
+                    The first £1M you spend on search ads reaches eager buyers. The 10th £1M reaches people who were never going to convert. Meridian uses a <strong>Hill function</strong> to model this curve: impact rises steeply at first, then flattens. This is critical for budget optimisation — it tells you when a channel has "enough" spend.
+                </div>
+                <div class="chart-area">
+                    <canvas id="saturationChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════ SECTION 5 — BAYESIAN ═══════════════ -->
+<section class="section" id="sec5">
+    <div class="section-inner">
+        <div class="section-label">The Engine</div>
+        <div class="section-title">Bayesian Inference</div>
+        <div class="section-subtitle">
+            Meridian doesn't produce a single "answer." It uses Bayesian statistics to explore thousands of plausible models, giving you a distribution of outcomes — and honest uncertainty about what it knows and doesn't know.
+        </div>
+
+        <div class="bayesian-visual">
+            <div class="bayesian-left">
+                <div class="prior-to-posterior">
+                    <div class="bayes-step">
+                        <div class="bayes-icon prior">𝒫</div>
+                        <div>
+                            <h4>Prior Beliefs</h4>
+                            <p>Start with sensible assumptions — e.g., "spend on TV probably has a positive effect on revenue." These can encode expert knowledge or research findings like Google's reach and frequency data.</p>
+                        </div>
+                    </div>
+                    <div style="text-align:center;color:var(--accent-purple);font-size:20px;">↓ combine with data ↓</div>
+                    <div class="bayes-step">
+                        <div class="bayes-icon likelihood">𝒟</div>
+                        <div>
+                            <h4>Observed Data (Likelihood)</h4>
+                            <p>Your historical marketing data — all the spend, impressions, and outcomes — is used to update those initial beliefs. Where data is strong, it overrides the prior; where data is weak, the prior provides stability.</p>
+                        </div>
+                    </div>
+                    <div style="text-align:center;color:var(--accent-green);font-size:20px;">↓ produces ↓</div>
+                    <div class="bayes-step">
+                        <div class="bayes-icon posterior">✓</div>
+                        <div>
+                            <h4>Posterior Distribution</h4>
+                            <p>The result: a full probability distribution for each channel's effect. Instead of "TV ROI = 2.3x", you get "TV ROI is most likely between 1.8x and 2.9x, with 90% confidence." This honesty is crucial for real decision-making.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bayesian-right">
+                <canvas id="bayesChart"></canvas>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════ SECTION 6 — OUTPUTS ═══════════════ -->
+<section class="section" id="sec6">
+    <div class="section-inner">
+        <div class="section-label">What You Get</div>
+        <div class="section-title">From Understanding to Action</div>
+        <div class="section-subtitle">
+            Once Meridian understands the relationship between your activity data and KPIs, it produces three actionable outputs.
+        </div>
+
+        <div class="output-grid">
+            <div class="output-card">
+                <div class="output-icon">📊</div>
+                <h4>Channel Attribution</h4>
+                <p>How much of your total revenue or conversions was driven by each marketing channel — with confidence intervals so you know which estimates to trust.</p>
+            </div>
+            <div class="output-card">
+                <div class="output-icon">💡</div>
+                <h4>ROI Estimates</h4>
+                <p>For every pound spent on each channel, how much incremental revenue did it generate? Meridian gives you a distribution, not a point estimate, so you can make risk-aware decisions.</p>
+            </div>
+            <div class="output-card">
+                <div class="output-icon">🎯</div>
+                <h4>Budget Optimisation</h4>
+                <p>Given your total budget, Meridian recommends the optimal split across channels that maximises your chosen KPI — whether that's revenue, conversions, or another metric.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════ SECTION 7 — SUMMARY ═══════════════ -->
+<section class="section" id="sec7">
+    <div class="section-inner" style="text-align: center;">
+        <div class="section-label">Putting It All Together</div>
+        <div class="section-title">The Complete Picture</div>
+        <div class="section-subtitle" style="margin-left:auto;margin-right:auto;">
+            Meridian takes your raw marketing activity data, transforms it to reflect real-world marketing dynamics, uses Bayesian inference to quantify each channel's contribution — and then tells you exactly how to reallocate your budget for maximum impact.
+        </div>
+
+        <div class="summary-flow">
+            <div class="summary-node">Impressions / Clicks / Spend</div>
+            <div class="summary-arrow">→</div>
+            <div class="summary-node">Adstock &amp; Saturation</div>
+            <div class="summary-arrow">→</div>
+            <div class="summary-node">Bayesian Regression</div>
+            <div class="summary-arrow">→</div>
+            <div class="summary-node">Channel Attribution</div>
+            <div class="summary-arrow">→</div>
+            <div class="summary-node" style="border-color: var(--accent-green); color: var(--accent-green);">Optimised Budget → Max Revenue</div>
+        </div>
+
+        <p style="margin-top: 48px; color: var(--text-dim); font-size: 14px; line-height: 1.7; max-width: 600px; margin-left: auto; margin-right: auto;">
+            The key insight: Meridian doesn't just find correlations. By modelling carryover effects, diminishing returns, and using Bayesian priors, it builds a <strong>causal understanding</strong> of how your marketing activity translates into business results — and uses that understanding to make your budget work harder.
+        </p>
+    </div>
+</section>
+
+<div style="height: 80px;"></div>
+
+<!-- ═══════════════ ANIMATION KEYFRAMES ═══════════════ -->
+<style>
+    @keyframes fadeInLeft {
+        from { opacity: 0; transform: translateX(-30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes fadeInRight {
+        from { opacity: 0; transform: translateX(30px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+</style>
+
+<script>
+// ── Scroll-driven animations ──
+const sections = document.querySelectorAll('.section-inner');
+const navDots = document.querySelectorAll('.nav-dot');
+const progressBar = document.getElementById('scrollProgress');
+
+function updateOnScroll() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrollPercent = (scrollTop / docHeight) * 100;
+    progressBar.style.width = scrollPercent + '%';
+
+    // Reveal sections
+    sections.forEach(sec => {
+        const rect = sec.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.8) {
+            sec.classList.add('visible');
+        }
+    });
+
+    // Update nav dots
+    const sectionEls = document.querySelectorAll('.section');
+    let current = 0;
+    sectionEls.forEach((sec, i) => {
+        const rect = sec.getBoundingClientRect();
+        if (rect.top < window.innerHeight * 0.5) current = i;
+    });
+    navDots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === current);
+    });
+}
+
+window.addEventListener('scroll', updateOnScroll);
+window.addEventListener('load', updateOnScroll);
+
+navDots.forEach(dot => {
+    dot.addEventListener('click', () => {
+        const idx = parseInt(dot.dataset.section);
+        document.getElementById('sec' + idx).scrollIntoView({ behavior: 'smooth' });
+    });
+});
+
+// ── Pipeline animation ──
+const pipelineStages = document.querySelectorAll('.pipeline-stage');
+let activeStage = 0;
+setInterval(() => {
+    pipelineStages.forEach(s => s.classList.remove('active'));
+    pipelineStages[activeStage].classList.add('active');
+    activeStage = (activeStage + 1) % pipelineStages.length;
+}, 1500);
+
+// ── Canvas charts ──
+function drawAdstockChart() {
+    const canvas = document.getElementById('adstockChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    const W = rect.width, H = rect.height;
+
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = 1;
+    for (let y = 0; y < H; y += 30) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+
+    // Original spend (spike)
+    ctx.fillStyle = 'rgba(59,130,246,0.15)';
+    ctx.fillRect(W * 0.12, H * 0.15, W * 0.06, H * 0.7);
+    ctx.fillStyle = 'rgba(59,130,246,0.6)';
+    ctx.font = '11px Inter';
+    ctx.fillText('Spend', W * 0.09, H * 0.1);
+
+    // Adstock decay curve
+    ctx.beginPath();
+    ctx.strokeStyle = '#10b981';
+    ctx.lineWidth = 2.5;
+    ctx.shadowColor = 'rgba(16,185,129,0.4)';
+    ctx.shadowBlur = 8;
+    const startX = W * 0.15;
+    const peakY = H * 0.18;
+    ctx.moveTo(startX, H * 0.85);
+    ctx.lineTo(startX, peakY);
+
+    for (let x = 0; x <= W * 0.75; x++) {
+        const t = x / (W * 0.75);
+        const decay = Math.exp(-2.5 * t);
+        const y = peakY + (H * 0.67) * (1 - decay);
+        ctx.lineTo(startX + x, y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Labels
+    ctx.fillStyle = '#10b981';
+    ctx.font = '11px Inter';
+    ctx.fillText('Adstock effect (decaying over time)', W * 0.3, H * 0.35);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.font = '10px Inter';
+    ctx.fillText('Week 1', W * 0.12, H * 0.98);
+    ctx.fillText('Week 2', W * 0.32, H * 0.98);
+    ctx.fillText('Week 3', W * 0.52, H * 0.98);
+    ctx.fillText('Week 4', W * 0.72, H * 0.98);
+}
+
+function drawSaturationChart() {
+    const canvas = document.getElementById('saturationChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    const W = rect.width, H = rect.height;
+
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = 1;
+    for (let y = 0; y < H; y += 30) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+
+    const pad = 40;
+    const chartW = W - pad * 2;
+    const chartH = H - pad * 1.5;
+
+    // Axes
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad, pad * 0.5);
+    ctx.lineTo(pad, pad * 0.5 + chartH);
+    ctx.lineTo(pad + chartW, pad * 0.5 + chartH);
+    ctx.stroke();
+
+    // Hill curve
+    ctx.beginPath();
+    ctx.strokeStyle = '#f59e0b';
+    ctx.lineWidth = 2.5;
+    ctx.shadowColor = 'rgba(245,158,11,0.4)';
+    ctx.shadowBlur = 8;
+
+    for (let i = 0; i <= 200; i++) {
+        const t = i / 200;
+        const x = pad + t * chartW;
+        // Hill function: y = x^n / (k^n + x^n)
+        const spend = t * 5;
+        const n = 1.8;
+        const k = 1.5;
+        const response = Math.pow(spend, n) / (Math.pow(k, n) + Math.pow(spend, n));
+        const y = pad * 0.5 + chartH * (1 - response);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Diminishing returns zone
+    ctx.fillStyle = 'rgba(239,68,68,0.06)';
+    ctx.fillRect(pad + chartW * 0.55, pad * 0.5, chartW * 0.45, chartH);
+    ctx.fillStyle = 'rgba(239,68,68,0.5)';
+    ctx.font = '10px Inter';
+    ctx.fillText('Diminishing returns zone', pad + chartW * 0.58, pad * 0.5 + 16);
+
+    // High impact zone
+    ctx.fillStyle = 'rgba(16,185,129,0.06)';
+    ctx.fillRect(pad, pad * 0.5, chartW * 0.3, chartH);
+    ctx.fillStyle = 'rgba(16,185,129,0.5)';
+    ctx.fillText('High impact zone', pad + 8, pad * 0.5 + 16);
+
+    // Axis labels
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.font = '10px Inter';
+    ctx.fillText('Spend →', pad + chartW * 0.4, pad * 0.5 + chartH + 16);
+    ctx.save();
+    ctx.translate(12, pad * 0.5 + chartH * 0.5);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('Impact →', 0, 0);
+    ctx.restore();
+}
+
+function drawBayesChart() {
+    const canvas = document.getElementById('bayesChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    const W = rect.width, H = rect.height;
+
+    function gaussian(x, mu, sigma) {
+        return Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2)) / (sigma * Math.sqrt(2 * Math.PI));
+    }
+
+    const pad = 30;
+    const chartW = W - pad * 2;
+    const chartH = H - pad * 2;
+
+    // X axis
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad, pad + chartH);
+    ctx.lineTo(pad + chartW, pad + chartH);
+    ctx.stroke();
+
+    // Prior (wide, centered at 2)
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(139,92,246,0.7)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    const priorMu = 2.0, priorSigma = 1.2;
+    const maxVal = gaussian(priorMu, priorMu, priorSigma);
+    for (let i = 0; i <= 200; i++) {
+        const t = i / 200;
+        const xVal = t * 5; // range 0 to 5
+        const y = gaussian(xVal, priorMu, priorSigma);
+        const px = pad + t * chartW;
+        const py = pad + chartH - (y / maxVal) * chartH * 0.45;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Posterior (narrower, shifted to 2.3)
+    const postMu = 2.3, postSigma = 0.5;
+    const postMax = gaussian(postMu, postMu, postSigma);
+
+    // Fill posterior
+    ctx.beginPath();
+    ctx.fillStyle = 'rgba(16,185,129,0.12)';
+    ctx.moveTo(pad, pad + chartH);
+    for (let i = 0; i <= 200; i++) {
+        const t = i / 200;
+        const xVal = t * 5;
+        const y = gaussian(xVal, postMu, postSigma);
+        const px = pad + t * chartW;
+        const py = pad + chartH - (y / postMax) * chartH * 0.85;
+        ctx.lineTo(px, py);
+    }
+    ctx.lineTo(pad + chartW, pad + chartH);
+    ctx.closePath();
+    ctx.fill();
+
+    // Stroke posterior
+    ctx.beginPath();
+    ctx.strokeStyle = '#10b981';
+    ctx.lineWidth = 2.5;
+    ctx.shadowColor = 'rgba(16,185,129,0.3)';
+    ctx.shadowBlur = 6;
+    for (let i = 0; i <= 200; i++) {
+        const t = i / 200;
+        const xVal = t * 5;
+        const y = gaussian(xVal, postMu, postSigma);
+        const px = pad + t * chartW;
+        const py = pad + chartH - (y / postMax) * chartH * 0.85;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // 90% CI shading
+    const ci5 = postMu - 1.645 * postSigma;
+    const ci95 = postMu + 1.645 * postSigma;
+    ctx.beginPath();
+    ctx.fillStyle = 'rgba(16,185,129,0.08)';
+    const ci5px = pad + (ci5 / 5) * chartW;
+    const ci95px = pad + (ci95 / 5) * chartW;
+    ctx.moveTo(ci5px, pad + chartH);
+    for (let px = ci5px; px <= ci95px; px++) {
+        const t = (px - pad) / chartW;
+        const xVal = t * 5;
+        const y = gaussian(xVal, postMu, postSigma);
+        const py = pad + chartH - (y / postMax) * chartH * 0.85;
+        ctx.lineTo(px, py);
+    }
+    ctx.lineTo(ci95px, pad + chartH);
+    ctx.closePath();
+    ctx.fill();
+
+    // Labels
+    ctx.fillStyle = 'rgba(139,92,246,0.8)';
+    ctx.font = '11px Inter';
+    ctx.fillText('Prior (before data)', pad + chartW * 0.05, pad + chartH * 0.42);
+
+    ctx.fillStyle = '#10b981';
+    ctx.fillText('Posterior (after data)', pad + chartW * 0.55, pad + 16);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.font = '10px Inter';
+    ctx.fillText('ROI multiplier →', pad + chartW * 0.35, pad + chartH + 18);
+    ctx.fillText('0x', pad, pad + chartH + 18);
+    ctx.fillText('2.5x', pad + chartW * 0.48, pad + chartH + 18);
+    ctx.fillText('5x', pad + chartW - 10, pad + chartH + 18);
+
+    // CI annotation
+    ctx.fillStyle = 'rgba(16,185,129,0.6)';
+    ctx.font = '10px Inter';
+    const ciMidPx = (ci5px + ci95px) / 2;
+    ctx.fillText('90% CI', ciMidPx - 18, pad + chartH - 8);
+}
+
+// Draw charts on load and resize
+function drawAllCharts() {
+    drawAdstockChart();
+    drawSaturationChart();
+    drawBayesChart();
+}
+window.addEventListener('load', drawAllCharts);
+window.addEventListener('resize', drawAllCharts);
+</script>
+
+</body>
+</html>
