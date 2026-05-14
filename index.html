@@ -654,6 +654,254 @@
             50% { opacity: 1; }
         }
 
+        /* ── Design toggle ── */
+        .design-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 8px 14px 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-dim);
+            user-select: none;
+            backdrop-filter: blur(8px);
+        }
+        .design-toggle:hover {
+            border-color: var(--accent-blue);
+            color: var(--text);
+        }
+        .toggle-switch {
+            width: 32px;
+            height: 18px;
+            background: var(--border);
+            border-radius: 9px;
+            position: relative;
+            transition: background 0.3s;
+            flex-shrink: 0;
+        }
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: var(--text);
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s, background 0.3s;
+        }
+        body.simplistic .toggle-switch {
+            background: var(--accent-blue);
+        }
+        body.simplistic .toggle-switch::after {
+            transform: translateX(14px);
+            background: #fff;
+        }
+
+        /* ── Expandable channel cards ── */
+        .channel-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            transition: background 0.3s ease, border-color 0.3s ease;
+            overflow: hidden;
+        }
+        .channel-card:hover {
+            background: var(--bg-card-hover);
+        }
+        .channel-header {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+        }
+        .channel-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .expand-toggle {
+            color: var(--text-dim);
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .channel-card.expanded .expand-toggle {
+            transform: rotate(180deg);
+        }
+        .data-types {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+        .channel-card.expanded .data-types {
+            max-height: 240px;
+        }
+        .data-types-inner {
+            margin: 0 20px;
+            padding: 4px 0 16px 40px;
+            border-top: 1px dashed var(--border);
+        }
+        .data-type-label {
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            padding: 12px 0 8px;
+        }
+        .data-type-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .data-type-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text);
+            padding: 4px 0;
+        }
+        .data-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            flex-shrink: 0;
+        }
+        .data-dot.spend { background: var(--accent-orange); }
+        .data-dot.impressions { background: var(--accent-blue); }
+        .data-dot.clicks { background: var(--accent-cyan); }
+        .data-dot.broadcasts { background: var(--accent-purple); }
+        .data-dot.audio { background: var(--accent-pink); }
+
+        /* New channel icon styles */
+        .card-icon.meta { background: rgba(24,119,242,0.15); color: #4f8bf7; }
+        .card-icon.google { background: rgba(234,67,53,0.15); color: #ea4335; }
+        .card-icon.linkedin { background: rgba(10,102,194,0.15); color: #2d8be0; }
+        .card-icon.total-connect { background: rgba(16,185,129,0.15); color: var(--accent-green); }
+
+        .card-icon svg { display: block; }
+
+        /* ── Simplistic theme ── */
+        body.simplistic {
+            --bg: #fafbfc;
+            --bg-card: #ffffff;
+            --bg-card-hover: #f4f6fa;
+            --border: #e2e6ee;
+            --text: #1a2236;
+            --text-dim: #64748b;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #0891b2;
+            --accent-purple: #7c3aed;
+            --accent-green: #059669;
+            --accent-orange: #d97706;
+            --accent-pink: #db2777;
+            --accent-red: #dc2626;
+            --glow-blue: rgba(59, 130, 246, 0.12);
+            --glow-green: rgba(5, 150, 105, 0.12);
+            --glow-purple: rgba(124, 58, 237, 0.12);
+        }
+        body.simplistic .hero h1 {
+            background: linear-gradient(135deg, #0f172a 0%, var(--accent-blue) 60%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        body.simplistic .hero::before {
+            background: radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%);
+            animation: heroPulse 8s ease-in-out infinite;
+        }
+        body.simplistic .meridian-core {
+            background: #ffffff;
+            border: 1.5px solid var(--accent-blue);
+            box-shadow: 0 2px 16px var(--glow-blue);
+        }
+        body.simplistic .meridian-core::before {
+            border-color: rgba(59,130,246,0.25);
+        }
+        body.simplistic .meridian-core small {
+            color: var(--text-dim);
+        }
+        body.simplistic .particle {
+            box-shadow: none;
+            opacity: 0.7;
+        }
+        body.simplistic .flow-line.left,
+        body.simplistic .flow-line.right {
+            opacity: 0.3;
+        }
+        body.simplistic .step-number {
+            color: rgba(15, 23, 42, 0.05);
+        }
+        body.simplistic .pipeline-sweep {
+            background: linear-gradient(90deg, transparent, rgba(59,130,246,0.04), transparent);
+        }
+        body.simplistic .pipeline-stage.active {
+            box-shadow: 0 2px 12px var(--glow-blue);
+        }
+        body.simplistic .pipeline-arrow {
+            background: var(--bg);
+        }
+        body.simplistic .step-card:hover {
+            border-color: rgba(59,130,246,0.3);
+            box-shadow: 0 4px 16px rgba(15,23,42,0.06);
+        }
+        body.simplistic .output-card:hover {
+            box-shadow: 0 6px 20px rgba(15,23,42,0.06);
+        }
+        body.simplistic .data-card:hover,
+        body.simplistic .kpi-card:hover {
+            box-shadow: 0 2px 10px rgba(15,23,42,0.04);
+        }
+        body.simplistic .step-card:hover,
+        body.simplistic .output-card:hover {
+            box-shadow: 0 4px 16px rgba(15,23,42,0.06);
+        }
+        body.simplistic .nav-dot {
+            background: #cbd5e1;
+        }
+        body.simplistic .nav-dot.active {
+            background: var(--accent-blue);
+            box-shadow: 0 0 8px var(--glow-blue);
+        }
+        body.simplistic .nav-dot::after {
+            color: var(--text-dim);
+        }
+        body.simplistic .scroll-progress {
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-green));
+            opacity: 0.7;
+        }
+        body.simplistic .card-icon.impressions { background: rgba(59,130,246,0.10); }
+        body.simplistic .card-icon.clicks { background: rgba(8,145,178,0.10); }
+        body.simplistic .card-icon.spend { background: rgba(217,119,6,0.10); }
+        body.simplistic .card-icon.tv { background: rgba(124,58,237,0.10); }
+        body.simplistic .card-icon.radio { background: rgba(219,39,119,0.10); }
+        body.simplistic .card-icon.revenue { background: rgba(5,150,105,0.10); }
+        body.simplistic .card-icon.conversions { background: rgba(124,58,237,0.10); }
+        body.simplistic .card-icon.meta { background: rgba(24,119,242,0.10); color: #1877f2; }
+        body.simplistic .card-icon.google { background: rgba(234,67,53,0.10); color: #ea4335; }
+        body.simplistic .card-icon.linkedin { background: rgba(10,102,194,0.10); color: #0a66c2; }
+        body.simplistic .card-icon.total-connect { background: rgba(5,150,105,0.10); color: var(--accent-green); }
+        body.simplistic .data-types-inner {
+            border-top-color: var(--border);
+        }
+        body.simplistic .summary-node:hover {
+            box-shadow: 0 2px 10px rgba(15,23,42,0.05);
+        }
+
         /* ── Responsive ── */
         @media (max-width: 900px) {
             .big-picture { grid-template-columns: 1fr; gap: 24px; }
@@ -679,6 +927,11 @@
 <body>
 
 <div class="scroll-progress" id="scrollProgress"></div>
+
+<div class="design-toggle" id="designToggle" role="button" tabindex="0" aria-label="Toggle simplistic design">
+    <div class="toggle-switch"></div>
+    <span>Simplistic Design</span>
+</div>
 
 <nav class="nav-dots" id="navDots">
     <div class="nav-dot active" data-section="0" data-label="Intro"></div>
@@ -711,41 +964,193 @@
             <!-- LEFT: Activity Data -->
             <div class="data-side">
                 <div class="data-group-label">Digital Marketing</div>
-                <div class="data-card" style="animation: fadeInLeft 0.6s ease 0.1s both">
-                    <div class="card-icon impressions">👁</div>
-                    <div>
-                        <div class="card-title">Impressions</div>
-                        <div class="card-desc">How many times your ads were seen</div>
+                <div class="channel-card" style="animation: fadeInLeft 0.6s ease 0.1s both">
+                    <div class="channel-header">
+                        <div class="card-icon meta">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 20V6c0-1.5 1-2.5 2.5-2.5S8 4.5 9 6l3 5 3-5c1-1.5 2-2.5 3.5-2.5S21 4.5 21 6v14"/>
+                                <path d="M3 20c0-3 1.5-5 4-5s3.5 2 5 5"/>
+                            </svg>
+                        </div>
+                        <div class="channel-info">
+                            <div class="card-title">Meta Ads</div>
+                            <div class="card-desc">Facebook &amp; Instagram campaigns</div>
+                        </div>
+                        <div class="expand-toggle">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 5 7 9 11 5"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="data-types">
+                        <div class="data-types-inner">
+                            <div class="data-type-label">Data Types</div>
+                            <div class="data-type-list">
+                                <div class="data-type-item"><span class="data-dot spend"></span>Spend</div>
+                                <div class="data-type-item"><span class="data-dot impressions"></span>Impressions</div>
+                                <div class="data-type-item"><span class="data-dot clicks"></span>Clicks</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="data-card" style="animation: fadeInLeft 0.6s ease 0.3s both">
-                    <div class="card-icon clicks">👆</div>
-                    <div>
-                        <div class="card-title">Clicks</div>
-                        <div class="card-desc">Engagements with your ads</div>
+                <div class="channel-card" style="animation: fadeInLeft 0.6s ease 0.25s both">
+                    <div class="channel-header">
+                        <div class="card-icon google">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="9"/>
+                                <path d="M21 12h-9"/>
+                                <path d="M12 12V3"/>
+                            </svg>
+                        </div>
+                        <div class="channel-info">
+                            <div class="card-title">Google Ads</div>
+                            <div class="card-desc">Search, Display &amp; YouTube</div>
+                        </div>
+                        <div class="expand-toggle">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 5 7 9 11 5"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="data-types">
+                        <div class="data-types-inner">
+                            <div class="data-type-label">Data Types</div>
+                            <div class="data-type-list">
+                                <div class="data-type-item"><span class="data-dot spend"></span>Spend</div>
+                                <div class="data-type-item"><span class="data-dot impressions"></span>Impressions</div>
+                                <div class="data-type-item"><span class="data-dot clicks"></span>Clicks</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="data-card" style="animation: fadeInLeft 0.6s ease 0.5s both">
-                    <div class="card-icon spend">💰</div>
-                    <div>
-                        <div class="card-title">Spend</div>
-                        <div class="card-desc">Budget allocated per channel</div>
+                <div class="channel-card" style="animation: fadeInLeft 0.6s ease 0.4s both">
+                    <div class="channel-header">
+                        <div class="card-icon linkedin">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                <line x1="8" y1="10" x2="8" y2="16"/>
+                                <circle cx="8" cy="7" r="0.5" fill="currentColor"/>
+                                <path d="M12 16v-4c0-1 1-2 2-2s2 1 2 2v4"/>
+                            </svg>
+                        </div>
+                        <div class="channel-info">
+                            <div class="card-title">LinkedIn Ads</div>
+                            <div class="card-desc">B2B sponsored content</div>
+                        </div>
+                        <div class="expand-toggle">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 5 7 9 11 5"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="data-types">
+                        <div class="data-types-inner">
+                            <div class="data-type-label">Data Types</div>
+                            <div class="data-type-list">
+                                <div class="data-type-item"><span class="data-dot spend"></span>Spend</div>
+                                <div class="data-type-item"><span class="data-dot impressions"></span>Impressions</div>
+                                <div class="data-type-item"><span class="data-dot clicks"></span>Clicks</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div class="data-group-label" style="margin-top: 16px;">Other Sources</div>
-                <div class="data-card" style="animation: fadeInLeft 0.6s ease 0.7s both">
-                    <div class="card-icon tv">📺</div>
-                    <div>
-                        <div class="card-title">TV</div>
-                        <div class="card-desc">Broadcast &amp; streaming ad campaigns</div>
+                <div class="channel-card" style="animation: fadeInLeft 0.6s ease 0.55s both">
+                    <div class="channel-header">
+                        <div class="card-icon total-connect">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="2.5"/>
+                                <circle cx="5" cy="6" r="1.5"/>
+                                <circle cx="19" cy="6" r="1.5"/>
+                                <circle cx="5" cy="18" r="1.5"/>
+                                <circle cx="19" cy="18" r="1.5"/>
+                                <line x1="6.5" y1="7" x2="10.5" y2="10.5"/>
+                                <line x1="17.5" y1="7" x2="13.5" y2="10.5"/>
+                                <line x1="6.5" y1="17" x2="10.5" y2="13.5"/>
+                                <line x1="17.5" y1="17" x2="13.5" y2="13.5"/>
+                            </svg>
+                        </div>
+                        <div class="channel-info">
+                            <div class="card-title">Total Connect</div>
+                            <div class="card-desc">Cross-channel connected campaigns</div>
+                        </div>
+                        <div class="expand-toggle">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 5 7 9 11 5"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="data-types">
+                        <div class="data-types-inner">
+                            <div class="data-type-label">Data Types</div>
+                            <div class="data-type-list">
+                                <div class="data-type-item"><span class="data-dot spend"></span>Spend</div>
+                                <div class="data-type-item"><span class="data-dot broadcasts"></span>No. of Broadcasts</div>
+                                <div class="data-type-item"><span class="data-dot audio"></span>No. of Audio Plays</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="data-card" style="animation: fadeInLeft 0.6s ease 0.9s both">
-                    <div class="card-icon radio">📻</div>
-                    <div>
-                        <div class="card-title">Radio</div>
-                        <div class="card-desc">Audio spots &amp; podcast ads</div>
+                <div class="channel-card" style="animation: fadeInLeft 0.6s ease 0.7s both">
+                    <div class="channel-header">
+                        <div class="card-icon tv">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="6" width="20" height="13" rx="2"/>
+                                <polyline points="8 3 12 6 16 3"/>
+                            </svg>
+                        </div>
+                        <div class="channel-info">
+                            <div class="card-title">TV</div>
+                            <div class="card-desc">Broadcast &amp; streaming ad campaigns</div>
+                        </div>
+                        <div class="expand-toggle">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 5 7 9 11 5"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="data-types">
+                        <div class="data-types-inner">
+                            <div class="data-type-label">Data Types</div>
+                            <div class="data-type-list">
+                                <div class="data-type-item"><span class="data-dot spend"></span>Spend</div>
+                                <div class="data-type-item"><span class="data-dot broadcasts"></span>No. of Broadcasts</div>
+                                <div class="data-type-item"><span class="data-dot audio"></span>No. of Audio Plays</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="channel-card" style="animation: fadeInLeft 0.6s ease 0.85s both">
+                    <div class="channel-header">
+                        <div class="card-icon radio">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="9" width="18" height="11" rx="2"/>
+                                <line x1="7" y1="5" x2="17" y2="9"/>
+                                <circle cx="8" cy="14.5" r="2"/>
+                                <line x1="14" y1="13" x2="18" y2="13"/>
+                                <line x1="14" y1="16" x2="18" y2="16"/>
+                            </svg>
+                        </div>
+                        <div class="channel-info">
+                            <div class="card-title">Radio</div>
+                            <div class="card-desc">Audio spots &amp; podcast ads</div>
+                        </div>
+                        <div class="expand-toggle">
+                            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 5 7 9 11 5"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="data-types">
+                        <div class="data-types-inner">
+                            <div class="data-type-label">Data Types</div>
+                            <div class="data-type-list">
+                                <div class="data-type-item"><span class="data-dot spend"></span>Spend</div>
+                                <div class="data-type-item"><span class="data-dot broadcasts"></span>No. of Broadcasts</div>
+                                <div class="data-type-item"><span class="data-dot audio"></span>No. of Audio Plays</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1015,6 +1420,36 @@
 </style>
 
 <script>
+// ── Design toggle ──
+const designToggle = document.getElementById('designToggle');
+function setSimplistic(on) {
+    document.body.classList.toggle('simplistic', on);
+    try { localStorage.setItem('meridianSimplistic', on ? '1' : '0'); } catch (e) {}
+    if (typeof drawAllCharts === 'function') drawAllCharts();
+}
+designToggle.addEventListener('click', () => {
+    setSimplistic(!document.body.classList.contains('simplistic'));
+});
+designToggle.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        setSimplistic(!document.body.classList.contains('simplistic'));
+    }
+});
+try {
+    if (localStorage.getItem('meridianSimplistic') === '1') {
+        document.body.classList.add('simplistic');
+    }
+} catch (e) {}
+
+// ── Channel card expand/collapse ──
+document.querySelectorAll('.channel-card').forEach(card => {
+    const header = card.querySelector('.channel-header');
+    header.addEventListener('click', () => {
+        card.classList.toggle('expanded');
+    });
+});
+
 // ── Scroll-driven animations ──
 const sections = document.querySelectorAll('.section-inner');
 const navDots = document.querySelectorAll('.nav-dot');
@@ -1066,6 +1501,33 @@ setInterval(() => {
 }, 1500);
 
 // ── Canvas charts ──
+function getChartTheme() {
+    const isSimplistic = document.body.classList.contains('simplistic');
+    return {
+        grid: isSimplistic ? 'rgba(15,23,42,0.06)' : 'rgba(255,255,255,0.05)',
+        axis: isSimplistic ? 'rgba(15,23,42,0.18)' : 'rgba(255,255,255,0.15)',
+        textDim: isSimplistic ? 'rgba(15,23,42,0.45)' : 'rgba(255,255,255,0.3)',
+        textBright: isSimplistic ? 'rgba(15,23,42,0.7)' : 'rgba(255,255,255,0.6)',
+        spendFill: isSimplistic ? 'rgba(59,130,246,0.18)' : 'rgba(59,130,246,0.15)',
+        spendLabel: isSimplistic ? 'rgba(59,130,246,0.85)' : 'rgba(59,130,246,0.6)',
+        green: isSimplistic ? '#059669' : '#10b981',
+        greenGlow: isSimplistic ? 'rgba(5,150,105,0.15)' : 'rgba(16,185,129,0.4)',
+        greenLabel: isSimplistic ? '#059669' : '#10b981',
+        orange: isSimplistic ? '#d97706' : '#f59e0b',
+        orangeGlow: isSimplistic ? 'rgba(217,119,6,0.15)' : 'rgba(245,158,11,0.4)',
+        redZoneFill: isSimplistic ? 'rgba(220,38,38,0.05)' : 'rgba(239,68,68,0.06)',
+        redZoneLabel: isSimplistic ? 'rgba(220,38,38,0.7)' : 'rgba(239,68,68,0.5)',
+        greenZoneFill: isSimplistic ? 'rgba(5,150,105,0.06)' : 'rgba(16,185,129,0.06)',
+        greenZoneLabel: isSimplistic ? 'rgba(5,150,105,0.7)' : 'rgba(16,185,129,0.5)',
+        purple: isSimplistic ? 'rgba(124,58,237,0.85)' : 'rgba(139,92,246,0.7)',
+        purpleLabel: isSimplistic ? 'rgba(124,58,237,0.85)' : 'rgba(139,92,246,0.8)',
+        posteriorFill: isSimplistic ? 'rgba(5,150,105,0.10)' : 'rgba(16,185,129,0.12)',
+        posteriorCI: isSimplistic ? 'rgba(5,150,105,0.08)' : 'rgba(16,185,129,0.08)',
+        ciLabel: isSimplistic ? 'rgba(5,150,105,0.75)' : 'rgba(16,185,129,0.6)',
+        useGlow: !isSimplistic
+    };
+}
+
 function drawAdstockChart() {
     const canvas = document.getElementById('adstockChart');
     if (!canvas) return;
@@ -1076,27 +1538,30 @@ function drawAdstockChart() {
     canvas.height = rect.height * dpr;
     ctx.scale(dpr, dpr);
     const W = rect.width, H = rect.height;
+    const theme = getChartTheme();
 
     // Grid
-    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.strokeStyle = theme.grid;
     ctx.lineWidth = 1;
     for (let y = 0; y < H; y += 30) {
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
     }
 
     // Original spend (spike)
-    ctx.fillStyle = 'rgba(59,130,246,0.15)';
+    ctx.fillStyle = theme.spendFill;
     ctx.fillRect(W * 0.12, H * 0.15, W * 0.06, H * 0.7);
-    ctx.fillStyle = 'rgba(59,130,246,0.6)';
+    ctx.fillStyle = theme.spendLabel;
     ctx.font = '11px Inter';
     ctx.fillText('Spend', W * 0.09, H * 0.1);
 
     // Adstock decay curve
     ctx.beginPath();
-    ctx.strokeStyle = '#10b981';
+    ctx.strokeStyle = theme.green;
     ctx.lineWidth = 2.5;
-    ctx.shadowColor = 'rgba(16,185,129,0.4)';
-    ctx.shadowBlur = 8;
+    if (theme.useGlow) {
+        ctx.shadowColor = theme.greenGlow;
+        ctx.shadowBlur = 8;
+    }
     const startX = W * 0.15;
     const peakY = H * 0.18;
     ctx.moveTo(startX, H * 0.85);
@@ -1112,11 +1577,11 @@ function drawAdstockChart() {
     ctx.shadowBlur = 0;
 
     // Labels
-    ctx.fillStyle = '#10b981';
+    ctx.fillStyle = theme.greenLabel;
     ctx.font = '11px Inter';
     ctx.fillText('Adstock effect (decaying over time)', W * 0.3, H * 0.35);
 
-    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.fillStyle = theme.textDim;
     ctx.font = '10px Inter';
     ctx.fillText('Week 1', W * 0.12, H * 0.98);
     ctx.fillText('Week 2', W * 0.32, H * 0.98);
@@ -1134,9 +1599,10 @@ function drawSaturationChart() {
     canvas.height = rect.height * dpr;
     ctx.scale(dpr, dpr);
     const W = rect.width, H = rect.height;
+    const theme = getChartTheme();
 
     // Grid
-    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.strokeStyle = theme.grid;
     ctx.lineWidth = 1;
     for (let y = 0; y < H; y += 30) {
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
@@ -1147,7 +1613,7 @@ function drawSaturationChart() {
     const chartH = H - pad * 1.5;
 
     // Axes
-    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.strokeStyle = theme.axis;
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(pad, pad * 0.5);
@@ -1157,10 +1623,12 @@ function drawSaturationChart() {
 
     // Hill curve
     ctx.beginPath();
-    ctx.strokeStyle = '#f59e0b';
+    ctx.strokeStyle = theme.orange;
     ctx.lineWidth = 2.5;
-    ctx.shadowColor = 'rgba(245,158,11,0.4)';
-    ctx.shadowBlur = 8;
+    if (theme.useGlow) {
+        ctx.shadowColor = theme.orangeGlow;
+        ctx.shadowBlur = 8;
+    }
 
     for (let i = 0; i <= 200; i++) {
         const t = i / 200;
@@ -1178,20 +1646,20 @@ function drawSaturationChart() {
     ctx.shadowBlur = 0;
 
     // Diminishing returns zone
-    ctx.fillStyle = 'rgba(239,68,68,0.06)';
+    ctx.fillStyle = theme.redZoneFill;
     ctx.fillRect(pad + chartW * 0.55, pad * 0.5, chartW * 0.45, chartH);
-    ctx.fillStyle = 'rgba(239,68,68,0.5)';
+    ctx.fillStyle = theme.redZoneLabel;
     ctx.font = '10px Inter';
     ctx.fillText('Diminishing returns zone', pad + chartW * 0.58, pad * 0.5 + 16);
 
     // High impact zone
-    ctx.fillStyle = 'rgba(16,185,129,0.06)';
+    ctx.fillStyle = theme.greenZoneFill;
     ctx.fillRect(pad, pad * 0.5, chartW * 0.3, chartH);
-    ctx.fillStyle = 'rgba(16,185,129,0.5)';
+    ctx.fillStyle = theme.greenZoneLabel;
     ctx.fillText('High impact zone', pad + 8, pad * 0.5 + 16);
 
     // Axis labels
-    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.fillStyle = theme.textBright;
     ctx.font = '10px Inter';
     ctx.fillText('Spend →', pad + chartW * 0.4, pad * 0.5 + chartH + 16);
     ctx.save();
@@ -1211,6 +1679,7 @@ function drawBayesChart() {
     canvas.height = rect.height * dpr;
     ctx.scale(dpr, dpr);
     const W = rect.width, H = rect.height;
+    const theme = getChartTheme();
 
     function gaussian(x, mu, sigma) {
         return Math.exp(-0.5 * Math.pow((x - mu) / sigma, 2)) / (sigma * Math.sqrt(2 * Math.PI));
@@ -1221,7 +1690,7 @@ function drawBayesChart() {
     const chartH = H - pad * 2;
 
     // X axis
-    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.strokeStyle = theme.axis;
     ctx.lineWidth = 1;
     ctx.beginPath();
     ctx.moveTo(pad, pad + chartH);
@@ -1230,7 +1699,7 @@ function drawBayesChart() {
 
     // Prior (wide, centered at 2)
     ctx.beginPath();
-    ctx.strokeStyle = 'rgba(139,92,246,0.7)';
+    ctx.strokeStyle = theme.purple;
     ctx.lineWidth = 2;
     ctx.setLineDash([6, 4]);
     const priorMu = 2.0, priorSigma = 1.2;
@@ -1253,7 +1722,7 @@ function drawBayesChart() {
 
     // Fill posterior
     ctx.beginPath();
-    ctx.fillStyle = 'rgba(16,185,129,0.12)';
+    ctx.fillStyle = theme.posteriorFill;
     ctx.moveTo(pad, pad + chartH);
     for (let i = 0; i <= 200; i++) {
         const t = i / 200;
@@ -1269,10 +1738,12 @@ function drawBayesChart() {
 
     // Stroke posterior
     ctx.beginPath();
-    ctx.strokeStyle = '#10b981';
+    ctx.strokeStyle = theme.green;
     ctx.lineWidth = 2.5;
-    ctx.shadowColor = 'rgba(16,185,129,0.3)';
-    ctx.shadowBlur = 6;
+    if (theme.useGlow) {
+        ctx.shadowColor = 'rgba(16,185,129,0.3)';
+        ctx.shadowBlur = 6;
+    }
     for (let i = 0; i <= 200; i++) {
         const t = i / 200;
         const xVal = t * 5;
@@ -1289,7 +1760,7 @@ function drawBayesChart() {
     const ci5 = postMu - 1.645 * postSigma;
     const ci95 = postMu + 1.645 * postSigma;
     ctx.beginPath();
-    ctx.fillStyle = 'rgba(16,185,129,0.08)';
+    ctx.fillStyle = theme.posteriorCI;
     const ci5px = pad + (ci5 / 5) * chartW;
     const ci95px = pad + (ci95 / 5) * chartW;
     ctx.moveTo(ci5px, pad + chartH);
@@ -1305,14 +1776,14 @@ function drawBayesChart() {
     ctx.fill();
 
     // Labels
-    ctx.fillStyle = 'rgba(139,92,246,0.8)';
+    ctx.fillStyle = theme.purpleLabel;
     ctx.font = '11px Inter';
     ctx.fillText('Prior (before data)', pad + chartW * 0.05, pad + chartH * 0.42);
 
-    ctx.fillStyle = '#10b981';
+    ctx.fillStyle = theme.greenLabel;
     ctx.fillText('Posterior (after data)', pad + chartW * 0.55, pad + 16);
 
-    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.fillStyle = theme.textDim;
     ctx.font = '10px Inter';
     ctx.fillText('ROI multiplier →', pad + chartW * 0.35, pad + chartH + 18);
     ctx.fillText('0x', pad, pad + chartH + 18);
@@ -1320,7 +1791,7 @@ function drawBayesChart() {
     ctx.fillText('5x', pad + chartW - 10, pad + chartH + 18);
 
     // CI annotation
-    ctx.fillStyle = 'rgba(16,185,129,0.6)';
+    ctx.fillStyle = theme.ciLabel;
     ctx.font = '10px Inter';
     const ciMidPx = (ci5px + ci95px) / 2;
     ctx.fillText('90% CI', ciMidPx - 18, pad + chartH - 8);
